@@ -6,6 +6,7 @@ export class Player {
   id: string;
   error: boolean;
   errorText: string;
+  ships: [];
 
   constructor(name: string, password: string) {
     this.name = name;
@@ -13,14 +14,16 @@ export class Player {
     this.id = crypto.randomUUID();
     this.error = false;
     this.errorText = "";
+    this.ships = [];
   }
 
   getData() {
-    return {
+    const data = {
       name: this.name,
       index: this.id,
       error: this.error,
       errorText: this.errorText,
     };
+    return data;
   }
 }

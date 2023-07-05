@@ -1,5 +1,5 @@
 export interface IRequest {
-    type: string;
-    data: string;
-    id: number
-  }
+  type: string;
+  data: string;
+  id: number;
+}

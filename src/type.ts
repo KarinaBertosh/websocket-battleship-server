@@ -3,3 +3,12 @@ export interface IRequest {
   data: string;
   id: number;
 }
+
+export interface IRoom {
+  roomId: string,
+  roomUsers:
+    {
+      name: string,
+      index: string,
+    }[],
+}

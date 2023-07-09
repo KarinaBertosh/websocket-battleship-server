@@ -7,16 +7,16 @@ export class Player {
   error: boolean;
   errorText: string;
   ships: [];
-  ws: WebSocket
+  ws: WebSocket;
 
-  constructor(name: string, password: string, WebSocket: WebSocket) {
+  constructor(name: string, password: string, ws: WebSocket) {
     this.name = name;
     this.password = password;
     this.id = crypto.randomUUID();
     this.error = false;
     this.errorText = "";
     this.ships = [];
-    this.ws = WebSocket;
+    this.ws = ws;
   }
 
   getData() {

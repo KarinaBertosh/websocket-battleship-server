@@ -1,71 +1,71 @@
-import { Player } from "./Player";
+import { IRequest, IRoom } from "../type";
 import { Game } from "./Game";
-import { IRequest } from "../type";
+import { Player } from "./Player";
+import { Room } from "./Room";
+import { sendResponse } from "./utils";
 
-export const connectWithWebSocket = (ws: any) => {
+let newGame: Game;
+const players = new Set<Player>();
+const newRoom = new Room(players);
+
+setInterval(() => {
+  newRoom.updateRooms();
+}, 500);
+
+export const connectWithWebSocket = (ws: WebSocket) => {
+  const reg = "reg";
+  const updateRoom = "update_room";
+  const createRoom = "create_room";
+  const createGame = "create_game";
+  const addShips = "add_ships";
+  const addUserToRoom = "add_user_to_room";
   let newPlayer: Player;
-  let newGame: Game;
 
-  ws.onmessage = (message: { data: string }) => {
-    const { data } = message;
-    const request = JSON.parse(data) as IRequest;
-    const requestType = request.type;
-    console.log(0, requestType);
+  ws.onmessage = (message) => {
+    console.log(0, message.data);
+    const request = JSON.parse(message.data) as IRequest;
+    const type = request.type;
 
     switch (true) {
-      case requestType === "reg":
+      case type === reg:
         {
-          const dataFromReg = JSON.parse(request.data);
-          newPlayer = new Player(dataFromReg.name, dataFromReg.password, ws);
-          const response = JSON.stringify({
-            type: "reg",
-            data: JSON.stringify(newPlayer.getData()),
-            id: 0,
-          });
-          ws.send(response);
+          const requestFromReg = JSON.parse(request.data);
+          newPlayer = new Player(
+            requestFromReg.name,
+            requestFromReg.password,
+            ws
+          );
+          players.add(newPlayer);
+          sendResponse(reg, JSON.stringify(newPlayer.getData()), ws);
+
+          if (newRoom.rooms.length) {
+            sendResponse(updateRoom, JSON.stringify(newRoom.rooms), ws);
+          }
         }
         break;
 
-      case requestType === "create_room":
+      case type === createRoom:
         {
           newGame = new Game(newPlayer);
-          const response = JSON.stringify({
-            type: "update_room",
-            data: JSON.stringify([
-              {
-                roomId: newGame.indexRoom,
-                roomUsers: [
-                  {
-                    name: newPlayer.name,
-                    index: newPlayer.id,
-                  },
-                ],
-              },
-            ]),
-            id: 0,
-          });
-          ws.send(response);
+          sendResponse(createGame, JSON.stringify(newGame), ws);
         }
         break;
 
-      case requestType === "add_user_to_room":
+      case type === addShips:
         {
-          const dataFromReg = JSON.parse(request.data);
-          newGame.indexRoom = dataFromReg.indexRoom;
-          const response = JSON.stringify({
-            type: "create_game",
-            data: JSON.stringify({
-              idGame: newGame.idGame,
-              idPlayer: newPlayer.id,
-            }),
-            id: 0,
-          });
-          ws.send(response);
+          const requestData2 = JSON.parse(request.data);
+          newGame.ships = requestData2.ships;
+          newRoom.ships = requestData2.ships;
 
-          const response3 = JSON.stringify({
-            type: "update_room",
-            data: JSON.stringify([
-              {
+          const currentRoom = newRoom.rooms.find(
+            (r) => r.roomId === requestData2.gameId
+          );
+          currentRoom
+            ? currentRoom.roomUsers.push({
+                name: newPlayer.name,
+                index: newPlayer.id,
+              })
+            : newRoom.rooms.push({
                 roomId: newGame.idGame,
                 roomUsers: [
                   {
@@ -73,28 +73,19 @@ export const connectWithWebSocket = (ws: any) => {
                     index: newPlayer.id,
                   },
                 ],
-              },
-            ]),
-            id: 0,
-          });
-          ws.send(response3);
+              });
         }
         break;
 
-      case requestType === "add_ships":
+      case type === addUserToRoom:
         {
-          const dataFromReg = JSON.parse(request.data);
-          newGame.ships = dataFromReg.data.ships;
-          newGame.idGame = dataFromReg.data.idGame;
-          const response = JSON.stringify({
-            type: "start_game",
-            data: JSON.stringify({
-              ships: newGame.ships,
-              currentPlayerIndex: newPlayer.id,
-            }),
-            id: 0,
+          const requestData = JSON.parse(request.data);
+          newGame = new Game(newPlayer);
+          const data = JSON.stringify({
+            idGame: requestData.indexRoom,
+            idPlayer: newPlayer.id,
           });
-          ws.send(response);
+          sendResponse(createGame, data, ws);
         }
         break;
     }

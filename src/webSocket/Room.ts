@@ -1,14 +1,13 @@
 import { IRoom } from "../type";
 import { Player } from "./Player";
-import crypto from "crypto";
+import { startGame } from "./typesRequest";
 import { sendResponse } from "./utils";
-
-const startGame = "start_game";
 
 export class Room {
   rooms: IRoom[] = [];
   players: Player[] = [];
   ships: any;
+  currentPlayers: Player[] = [];
   constructor(players: any, ships?: any) {
     this.players = players;
     this.ships = ships;
@@ -20,24 +19,24 @@ export class Room {
     );
 
     if (roomWithTwoPlayer) {
-      let playerFirst = roomWithTwoPlayer.roomUsers[0].index;
-      let playerSecond = roomWithTwoPlayer.roomUsers[1].index;
-      let currentPlayers: Player[] = [];
-
       this.players.forEach((pl) => {
-        if (pl.id === playerFirst || pl.id === playerSecond) {
-          currentPlayers.push(pl);
+        if (
+          pl.id === roomWithTwoPlayer.roomUsers[0].index ||
+          pl.id === roomWithTwoPlayer.roomUsers[1].index
+        ) {
+          this.currentPlayers.push(pl);
         }
       });
 
-      if (currentPlayers) {
+      if (this.currentPlayers) {
         const data = JSON.stringify({
           ships: this.ships,
-          currentPlayerIndex: currentPlayers[0],
+          currentPlayerIndex: this.currentPlayers[0].id,
         });
-        sendResponse(startGame, data, currentPlayers[0].ws);
-        sendResponse(startGame, data, currentPlayers[1].ws);
+        sendResponse(startGame, data, this.currentPlayers[0].ws);
+        sendResponse(startGame, data, this.currentPlayers[1].ws);
       }
+
       this.deleteRoom(roomWithTwoPlayer);
     }
   }
@@ -45,5 +44,9 @@ export class Room {
   deleteRoom(room: any) {
     const index = this.rooms.indexOf(room);
     this.rooms.splice(index, 1);
+  }
+
+  sendCurrentPlayers() {
+    return this.currentPlayers;
   }
 }

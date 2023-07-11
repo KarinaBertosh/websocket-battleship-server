@@ -1,0 +1,9 @@
+export const reg = "reg";
+export const updateRoom = "update_room";
+export const createRoom = "create_room";
+export const createGame = "create_game";
+export const addShips = "add_ships";
+export const addUserToRoom = "add_user_to_room";
+export const turn = "turn";
+export const attack = "attack";
+export const startGame = "start_game";

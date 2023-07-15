@@ -2,7 +2,7 @@ import * as fs from "fs";
 import * as path from "path";
 import * as http from "http";
 import { WebSocketServer } from "ws";
-import { connectWithWebSocket } from "../webSocket/connectWithWebSocket";
+import { connectWithWebSocket } from "../webSocket";
 
 
 export const httpServer = http.createServer(function (req, res) {

@@ -13,8 +13,6 @@ export const attack = (ws: WebSocket, player: Player, request: IRequest) => {
   const nextPlayer = currentRoom?.players.find((p) => p.id !== indexPlayer);
   let status = false;
 
-  console.log(5, currentRoom);
-
   if (nextPlayer && currentPlayer) {
     for (var i = 0; i < nextPlayer.ships.length; i++) {
       if (
@@ -38,12 +36,9 @@ export const attack = (ws: WebSocket, player: Player, request: IRequest) => {
     sendResponse(TypeRequest.attack, data, ws);
 
     const dataTurn = JSON.stringify({
-      currentPlayer: status === false ? nextPlayer.id : player.id,
+      currentPlayer: nextPlayer.id,
     });
-    sendResponse(TypeRequest.turn, dataTurn, ws);
 
-    console.log(6, status);
-    console.log(7, indexPlayer);
-    console.log(8, nextPlayer);
+    status === false && sendResponse(TypeRequest.turn, dataTurn, ws);
   }
 };

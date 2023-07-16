@@ -11,15 +11,15 @@ export const createRoom = (
   player: Player,
   request: IRequest
 ) => {
-  const newGame = new Game();
-  db.addGame(newGame);
+  // const newGame = new Game(player);
+  // db.addGame(newGame);
   const room = new Room(player);
   db.addRoom(room);
 
   sendResponse(
     TypeRequest.createGame,
     JSON.stringify({
-      idGame: newGame.idGame,
+      idGame: room.id,
       idPlayer: player.id,
     }),
     ws

@@ -5,13 +5,9 @@ import { db } from "..";
 import { TypeRequest } from "../../type";
 import { sendResponse } from "../utils";
 
-
 export const addUser = (ws: WebSocket, player: Player, request: IRequest) => {
   const requestData = JSON.parse(request.data);
   const indexRoom = requestData.indexRoom;
-
-  const room = new Room(player);
-  db.addRoom(room);
 
   sendResponse(
     TypeRequest.createGame,
@@ -21,4 +17,11 @@ export const addUser = (ws: WebSocket, player: Player, request: IRequest) => {
     }),
     ws
   );
+
+  const currentRoom = db.rooms.find((r) => (r.id = indexRoom));
+  currentRoom && db.addPlayerToRoom(player, currentRoom);
+
+  // db.deleteRoom(room);
+
+  // sendResponse(TypeRequest.updateRoom, JSON.stringify(db.rooms), ws);
 };

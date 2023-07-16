@@ -5,6 +5,7 @@ import { addUser } from "./methods/addUser";
 import { createRoom } from "./methods/createRoom";
 import { registration } from "./methods/registration";
 import { TypeRequest } from "../type";
+import { addShips } from "./methods/addShips";
 
 export const db = new DataBase();
 
@@ -26,6 +27,10 @@ export const connectWithWebSocket = (ws: WebSocket) => {
 
       case TypeRequest.addUserToRoom:
         addUser(ws, newPlayer, request);
+        break;
+
+      case TypeRequest.addShips:
+        addShips(ws, newPlayer, request);
         break;
     }
   };

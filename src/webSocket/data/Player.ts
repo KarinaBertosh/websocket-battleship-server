@@ -6,7 +6,7 @@ export class Player {
   id: string;
   error: boolean;
   errorText: string;
-  ships: [];
+  ships: [] = [];
   ws: WebSocket;
 
   constructor(name: string, password: string, ws: WebSocket) {
@@ -15,7 +15,6 @@ export class Player {
     this.id = crypto.randomUUID();
     this.error = false;
     this.errorText = "";
-    this.ships = [];
     this.ws = ws;
   }
 

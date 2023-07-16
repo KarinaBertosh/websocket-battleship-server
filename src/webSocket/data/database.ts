@@ -15,6 +15,24 @@ export class DataBase {
     this.rooms.push(room);
   }
 
+  addPlayerToRoom(player: Player, room: Room) {
+    const index = this.rooms.indexOf(room);
+    this.rooms[index].players.push(player);
+  }
+
+  addShips(ships: [], player: Player) {
+    this.rooms.forEach((r) => {
+      const indexPlayer = r.players.indexOf(player);
+      if (indexPlayer !== undefined)
+        r.players[indexPlayer].ships.push(...ships);
+    });
+  }
+
+  deleteRoom(room: Room) {
+    const index = this.rooms.indexOf(room);
+    this.rooms.splice(index, 1);
+  }
+
   addGame(game: Game) {
     this.games.push(game);
   }

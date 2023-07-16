@@ -1,26 +1,21 @@
-import { db } from "..";
-import { IRequest, TypeRequest } from "../../type";
-import { Player } from "../data/Player";
-import { sendResponse } from "../utils";
-import WebSocket from "ws";
+import { db } from '..';
+import { IRequest, TypeRequest } from '../../type';
+import { Player } from '../data/Player';
+import { sendResponse } from '../utils';
+import WebSocket from 'ws';
 
 export const attack = (ws: WebSocket, player: Player, request: IRequest) => {
   const requestData = JSON.parse(request.data);
   const { x, y, indexPlayer, gameId } = requestData;
-  const currentRoom = db.rooms.find(
-    (room) => room.players.length === 2 && room.id === gameId
-  );
+  const currentRoom = db.rooms.find((room) => room.players.length === 2 && room.id === gameId);
   const currentPlayer = currentRoom?.players.find((p) => p.id === indexPlayer);
   const nextPlayer = currentRoom?.players.find((p) => p.id !== indexPlayer);
-  let status = false;
+  let status = 'miss';
 
   if (nextPlayer && currentPlayer) {
     for (var i = 0; i < nextPlayer.ships.length; i++) {
-      if (
-        nextPlayer.ships[i]["position"]["x"] === x &&
-        nextPlayer.ships[i]["position"]["y"] === y
-      ) {
-        status = true;
+      if (nextPlayer.ships[i]['position']['x'] === x && nextPlayer.ships[i]['position']['y'] === y) {
+        status = 'shot';
         continue;
       }
     }
@@ -31,15 +26,15 @@ export const attack = (ws: WebSocket, player: Player, request: IRequest) => {
         y: y,
       },
       currentPlayer: currentPlayer.id,
-      status: status === true ? "shot" : "miss",
+      status: status,
     });
 
     sendResponse(TypeRequest.attack, data, ws);
 
     const dataTurn = JSON.stringify({
-      currentPlayer: nextPlayer.id,
+      currentPlayer: status === 'miss' ? nextPlayer.id : currentPlayer.id,
     });
 
-    status === false && sendResponse(TypeRequest.turn, dataTurn, ws);
+    sendResponse(TypeRequest.turn, dataTurn, ws);
   }
 };

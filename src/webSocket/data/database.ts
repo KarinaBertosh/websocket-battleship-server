@@ -1,6 +1,6 @@
-import { Game } from "./Game";
-import { Player } from "./Player";
-import { Room } from "./Room";
+import { Game } from './Game';
+import { Player } from './Player';
+import { Room } from './Room';
 
 export class DataBase {
   players: Player[] = [];
@@ -23,8 +23,7 @@ export class DataBase {
   addShips(ships: [], player: Player) {
     this.rooms.forEach((r) => {
       const indexPlayer = r.players.indexOf(player);
-      if (indexPlayer !== undefined)
-        r.players[indexPlayer].ships.push(...ships);
+      if (indexPlayer !== undefined) r.players[indexPlayer].ships.push(...ships);
     });
   }
 
@@ -38,8 +37,10 @@ export class DataBase {
   }
 
   returnRooms() {
+    const freeRooms = this.rooms.filter((r) => r.players.length === 1);
+
     return JSON.stringify(
-      this.rooms.map((room) => ({
+      freeRooms.map((room) => ({
         roomId: room.id,
         roomUsers: room.players.map((pl) => ({
           name: pl.name,

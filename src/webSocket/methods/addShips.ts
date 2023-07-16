@@ -9,11 +9,9 @@ export const addShips = (ws: WebSocket, player: Player, request: IRequest) => {
   const requestData = JSON.parse(request.data);
   db.addShips(requestData.ships, player);
 
-  // get room by id
   const roomWithTwoPlayer = db.rooms.find(
     (room) => room.players.length === 2 && room.id === requestData.gameId
   );
-  console.log(4, roomWithTwoPlayer);
 
   if (roomWithTwoPlayer !== undefined) {
     roomWithTwoPlayer.players.forEach((player) => {
@@ -23,7 +21,7 @@ export const addShips = (ws: WebSocket, player: Player, request: IRequest) => {
           ships: player.ships,
           currentPlayerIndex: player.id,
         }),
-        ws
+        player.ws
       );
     });
     db.deleteRoom(roomWithTwoPlayer);

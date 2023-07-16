@@ -1,5 +1,6 @@
 import crypto from "crypto";
 
+import WebSocket from "ws";
 export class Player {
   name: string;
   password: string;

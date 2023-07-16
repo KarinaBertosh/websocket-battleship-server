@@ -2,6 +2,7 @@ import { db } from "..";
 import { IRequest, TypeRequest } from "../../type";
 import { Player } from "../data/Player";
 import { sendResponse } from "../utils";
+import WebSocket from "ws";
 
 export const attack = (ws: WebSocket, player: Player, request: IRequest) => {
   const requestData = JSON.parse(request.data);

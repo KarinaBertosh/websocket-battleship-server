@@ -7,6 +7,7 @@ import { registration } from "./methods/registration";
 import { TypeRequest } from "../type";
 import { addShips } from "./methods/addShips";
 import { attack } from "./methods/attack";
+import WebSocket from "ws";
 
 export const db = new DataBase();
 
@@ -14,8 +15,8 @@ export const connectWithWebSocket = (ws: WebSocket) => {
   let newPlayer: Player;
 
   ws.onmessage = (message) => {
-    console.log(0, message.data);
-    const request = JSON.parse(message.data) as IRequest;
+    console.log(0, message.data.toString());
+    const request = JSON.parse(message.data.toString()) as IRequest;
 
     switch (request.type) {
       case TypeRequest.reg:

@@ -1,3 +1,4 @@
+import WebSocket from "ws";
 export const sendResponse = (type: string, data: string, ws: WebSocket) => {
   const response = JSON.stringify({
     type: type,

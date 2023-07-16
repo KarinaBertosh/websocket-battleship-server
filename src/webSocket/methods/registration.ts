@@ -3,6 +3,7 @@ import { IRequest } from "../../type";
 import { Player } from "../data/Player";
 import { sendResponse } from "../utils";
 import { db } from "..";
+import WebSocket from "ws";
 
 
 export const registration = (ws: WebSocket, request: IRequest): Player => {

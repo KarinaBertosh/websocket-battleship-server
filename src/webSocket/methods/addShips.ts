@@ -4,6 +4,7 @@ import { Room } from "../data/Room";
 import { db } from "..";
 import { TypeRequest } from "../../type";
 import { sendResponse } from "../utils";
+import WebSocket from "ws";
 
 export const addShips = (ws: WebSocket, player: Player, request: IRequest) => {
   const requestData = JSON.parse(request.data);

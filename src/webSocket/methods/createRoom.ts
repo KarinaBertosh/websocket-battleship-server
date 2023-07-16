@@ -11,8 +11,6 @@ export const createRoom = (
   player: Player,
   request: IRequest
 ) => {
-  // const newGame = new Game(player);
-  // db.addGame(newGame);
   const room = new Room(player);
   db.addRoom(room);
 

@@ -24,8 +24,13 @@ export const addShips = (ws: WebSocket, player: Player, request: IRequest) => {
         player.ws
       );
     });
-    db.deleteRoom(roomWithTwoPlayer);
+    // db.deleteRoom(roomWithTwoPlayer);
+    sendResponse(
+      TypeRequest.turn,
+      JSON.stringify({ currentPlayer: Number(player.id) }),
+      ws
+    );
   }
 
-  sendResponse(TypeRequest.updateRoom, JSON.stringify(db.rooms), ws);
+  // sendResponse(TypeRequest.updateRoom, JSON.stringify(db.rooms), ws);
 };

@@ -6,6 +6,7 @@ import { createRoom } from "./methods/createRoom";
 import { registration } from "./methods/registration";
 import { TypeRequest } from "../type";
 import { addShips } from "./methods/addShips";
+import { attack } from "./methods/attack";
 
 export const db = new DataBase();
 
@@ -31,6 +32,10 @@ export const connectWithWebSocket = (ws: WebSocket) => {
 
       case TypeRequest.addShips:
         addShips(ws, newPlayer, request);
+        break;
+
+      case TypeRequest.attack:
+        attack(ws, newPlayer, request);
         break;
     }
   };

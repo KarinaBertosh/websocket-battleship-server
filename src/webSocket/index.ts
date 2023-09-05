@@ -1,43 +1,46 @@
 import { IRequest, IRoom } from "../type";
-import { Player } from "./data/Player";
-import { DataBase } from "./data/database";
+import { Player } from "./modules/Player";
+import { DataBase } from "./modules/database";
 import { addUser } from "./methods/addUser";
 import { createRoom } from "./methods/createRoom";
 import { registration } from "./methods/registration";
 import { TypeRequest } from "../type";
 import { addShips } from "./methods/addShips";
 import { attack } from "./methods/attack";
-import WebSocket from "ws";
+import WebSocket, { RawData } from "ws";
 
 export const db = new DataBase();
 
 export const connectWithWebSocket = (ws: WebSocket) => {
-  let newPlayer: Player;
+  let currentPlayer: Player;
 
-  ws.onmessage = (message) => {
-    console.log(0, message.data.toString());
-    const request = JSON.parse(message.data.toString()) as IRequest;
+  ws.on('error', console.error);
+
+  ws.on('message', (message: RawData) => {
+    console.log(0, message.toString());
+
+    const request = JSON.parse(message.toString()) as IRequest;
 
     switch (request.type) {
       case TypeRequest.reg:
-        newPlayer = registration(ws, request);
+        currentPlayer = registration(ws, request);
         break;
 
       case TypeRequest.createRoom:
-        createRoom(ws, newPlayer, request);
+        createRoom(ws, currentPlayer, request);
         break;
 
       case TypeRequest.addUserToRoom:
-        addUser(ws, newPlayer, request);
+        addUser(ws, currentPlayer, request);
         break;
 
       case TypeRequest.addShips:
-        addShips(ws, newPlayer, request);
+        addShips(ws, currentPlayer, request);
         break;
 
       case TypeRequest.attack:
-        attack(ws, newPlayer, request);
+        attack(ws, currentPlayer, request);
         break;
     }
-  };
+  });
 };

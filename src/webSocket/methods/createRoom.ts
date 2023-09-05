@@ -1,7 +1,7 @@
 import { IRequest } from "../../type";
-import { Game } from "../data/Game";
-import { Player } from "../data/Player";
-import { Room } from "../data/Room";
+import { Game } from "../modules/Game";
+import { Player } from "../modules/Player";
+import { Room } from "../modules/Room";
 import { db } from "..";
 import { TypeRequest } from "../../type";
 import { sendResponse } from "../utils";
@@ -12,15 +12,15 @@ export const createRoom = (
   player: Player,
   request: IRequest
 ) => {
-  const room = new Room(player);
+  const room = new Room();
   db.addRoom(room);
 
   sendResponse(
     TypeRequest.createGame,
-    JSON.stringify({
+    {
       idGame: room.id,
       idPlayer: player.id,
-    }),
+    },
     ws
   );
 };

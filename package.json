@@ -8,21 +8,32 @@
     "start:dev": "cross-env npx nodemon",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KarinaBertoshwebsocket-battleship-server.git"
+  },
   "author": "Karyna Bertash",
   "keywords": [],
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/KarinaBertosh/websocket-battleship-server/issues"
+  },
   "devDependencies": {
     "@types/uuid": "^9.0.2",
     "@types/ws": "^8.5.5",
-    "nodemon": "^2.0.16"
-  },
-  "dependencies": {
-    "@nut-tree/nut-js": "^2.3.0",
     "cross-env": "^7.0.3",
+    "dotenv": "^16.3.1",
+    "eslint": "^8.44.0",
+    "nodemon": "^2.0.22",
+    "prettier": "^3.0.0",
     "ts-node": "^10.9.1",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.1.6",
-    "uuid": "^9.0.0",
+    "webpack": "^5.88.1"
+  },
+  "dependencies": {
+    "@types/node": "^20.4.1",
+    "http": "^0.0.1-security",
     "ws": "^8.13.0"
   }
 }

@@ -23,3 +23,15 @@ export const TypeRequest = {
   attack: "attack",
   startGame: "start_game",
 };
+
+interface IShipPosition {
+  x: number,
+  y: number,
+}
+
+export interface IShip {
+  position: IShipPosition,
+  direction: boolean,
+  type: "huge" | "large" | "medium" | "small",
+  length: number
+}

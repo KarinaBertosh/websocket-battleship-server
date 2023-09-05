@@ -1,7 +1,9 @@
 {
   "compilerOptions": {
     "target": "ES6",
-    "lib": ["ES6"],
+    "lib": [
+      "ES6"
+    ],
     "module": "CommonJS",
     "rootDir": "src",
     "resolveJsonModule": true,
@@ -13,9 +15,14 @@
     "noImplicitAny": true,
     "skipLibCheck": true
   },
-  "include": ["./**/*.ts", "../*.ts"],
-  "exclude": ["node_modules"],
+  "include": [
+    "./**/*.ts",
+    "../*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ],
   "ts-node": {
-    "esm": true
+    "esm": true,
   }
 }

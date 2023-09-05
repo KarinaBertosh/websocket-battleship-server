@@ -1,6 +1,6 @@
 import { TypeRequest } from "../../type";
 import { IRequest } from "../../type";
-import { Player } from "../data/Player";
+import { Player } from "../modules/Player";
 import { sendResponse } from "../utils";
 import { db } from "..";
 import WebSocket from "ws";
@@ -8,13 +8,31 @@ import WebSocket from "ws";
 
 export const registration = (ws: WebSocket, request: IRequest): Player => {
   const requestData = JSON.parse(request.data);
-  const player = new Player(requestData.name, requestData.password, ws);
+  const userName = requestData.name;
+  const userPassword = requestData.password;
+
+  const resp = JSON.stringify({
+    type: TypeRequest.reg,
+    data:
+      JSON.stringify({
+        name: userName,
+        index: 1,
+        error: false,
+        errorText: '',
+      }),
+    id: 0,
+  });
+  ws.send(resp);
+
+  const player = new Player(userName, userPassword, ws);
   db.addPlayer(player);
 
-  sendResponse(TypeRequest.reg, JSON.stringify(player.getData()), ws);
-
   if (db.rooms.length) {
-    sendResponse(TypeRequest.updateRoom, db.returnRooms(), ws);
+    ws.send(JSON.stringify({
+      type: TypeRequest.updateRoom,
+      data: db.getRoomsForResp(),
+      id: 0,
+    }))
   }
 
   return player;

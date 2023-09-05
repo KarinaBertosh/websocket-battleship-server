@@ -8,7 +8,7 @@ import WebSocket from "ws";
 
 export const addShips = (ws: WebSocket, player: Player, request: IRequest) => {
   const requestData = JSON.parse(request.data);
-  db.addShips(requestData.ships, player);
+  // db.addShips(requestData.ships, player);
 
   const roomWithTwoPlayer = db.rooms.find(
     (room) => room.players.length === 2 && room.id === requestData.gameId

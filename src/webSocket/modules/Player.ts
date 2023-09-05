@@ -1,21 +1,21 @@
 import crypto from "crypto";
 
 import WebSocket from "ws";
+import { IShip } from "../../type";
 export class Player {
   name: string;
   password: string;
   id: string;
-  error: boolean;
-  errorText: string;
-  ships: [] = [];
+  error: boolean = false;
+  errorText: string = '';
+  ships: IShip[] = [];
+  isTurn: boolean = false;
   ws: WebSocket;
 
   constructor(name: string, password: string, ws: WebSocket) {
     this.name = name;
     this.password = password;
     this.id = crypto.randomUUID();
-    this.error = false;
-    this.errorText = "";
     this.ws = ws;
   }
 
@@ -27,5 +27,13 @@ export class Player {
       errorText: this.errorText,
     };
     return data;
+  }
+
+  addShips(ships: IShip[]) {
+    this.ships = ships;
+  }
+
+  changeTurn() {
+    this.isTurn = !this.isTurn
   }
 }

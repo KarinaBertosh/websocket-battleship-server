@@ -1,6 +1,6 @@
 import { db } from '..';
 import { IRequest, TypeRequest } from '../../type';
-import { Player } from '../data/Player';
+import { Player } from '../modules/Player';
 import { sendResponse } from '../utils';
 import WebSocket from 'ws';
 

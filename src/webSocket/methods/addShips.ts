@@ -1,38 +1,40 @@
 import { IRequest } from "../../type";
-import { Player } from "../data/Player";
-import { Room } from "../data/Room";
 import { db } from "..";
 import { TypeRequest } from "../../type";
 import { sendResponse } from "../utils";
 import WebSocket from "ws";
+import { Player } from "../modules/Player";
 
 export const addShips = (ws: WebSocket, player: Player, request: IRequest) => {
   const requestData = JSON.parse(request.data);
-  // db.addShips(requestData.ships, player);
+  const { ships, gameId, indexPlayer } = requestData;
+  player.addShips(ships);
 
-  const roomWithTwoPlayer = db.rooms.find(
-    (room) => room.players.length === 2 && room.id === requestData.gameId
-  );
+  const roomPlayers = db.getRoomPlayers(gameId)
+  const currentPlayer = roomPlayers[0];
+  db.addShips(gameId, indexPlayer, ships);
 
-  if (roomWithTwoPlayer !== undefined) {
-    roomWithTwoPlayer.players.forEach((player) => {
+  if (db.isStartGame(gameId)) {
+    currentPlayer.changeTurn();
+    roomPlayers.forEach(player => {
       sendResponse(
         TypeRequest.startGame,
-        JSON.stringify({
-          ships: player.ships,
-          currentPlayerIndex: player.id,
-        }),
+        player.ships,
         player.ws
-      );
+      )
+      sendResponse(
+        TypeRequest.turn,
+        {
+          currentPlayer: currentPlayer.id,
+        },
+        player.ws
+      )
     });
-    // db.deleteRoom(roomWithTwoPlayer);
   }
 
   sendResponse(
-    TypeRequest.turn,
-    JSON.stringify({ currentPlayer: player.id }),
-    ws
-  );
-
-  // sendResponse(TypeRequest.updateRoom, JSON.stringify(db.rooms), ws);
+    TypeRequest.updateRoom,
+    db.getRoomsForResp(),
+    ws,
+  )
 };

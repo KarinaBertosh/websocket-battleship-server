@@ -1,40 +1,42 @@
 import { db } from '..';
 import { IRequest, TypeRequest } from '../../type';
-import { Player } from '../modules/Player';
 import { sendResponse } from '../utils';
-import WebSocket from 'ws';
 
-export const attack = (ws: WebSocket, player: Player, request: IRequest) => {
+export const attack = (request: IRequest, isRandom = false) => {
   const requestData = JSON.parse(request.data);
   const { x, y, indexPlayer, gameId } = requestData;
-  const currentRoom = db.rooms.find((room) => room.players.length === 2 && room.id === gameId);
-  const currentPlayer = currentRoom?.players.find((p) => p.id === indexPlayer);
-  const nextPlayer = currentRoom?.players.find((p) => p.id !== indexPlayer);
-  let status = 'miss';
+  const roomPlayers = db.getRoomPlayers(gameId)
 
-  if (nextPlayer && currentPlayer) {
-    for (var i = 0; i < nextPlayer.ships.length; i++) {
-      if (nextPlayer.ships[i]['position']['x'] === x && nextPlayer.ships[i]['position']['y'] === y) {
-        status = 'shot';
-        continue;
-      }
-    }
+  const turnUser = roomPlayers.find((p) => p.isTurn)
 
-    const data = JSON.stringify({
-      position: {
-        x: x,
-        y: y,
-      },
-      currentPlayer: currentPlayer.id,
-      status: status,
+   if (turnUser && turnUser.id === indexPlayer) {
+    roomPlayers.forEach(player => {
+
+      sendResponse(
+        TypeRequest.attack,
+        {
+          position:
+          {
+            x: x,
+            y: y,
+          },
+          currentPlayer: indexPlayer,
+          status: "miss",
+        },
+        player.ws
+      )
+      player.changeTurn();
     });
 
-    sendResponse(TypeRequest.attack, data, ws);
-
-    const dataTurn = JSON.stringify({
-      currentPlayer: status === 'miss' ? nextPlayer.id : currentPlayer.id,
-    });
-
-    sendResponse(TypeRequest.turn, dataTurn, ws);
+    const newTurnUser = roomPlayers.find((p) => p.isTurn)
+    roomPlayers.forEach(player => {
+      sendResponse(
+        TypeRequest.turn,
+        {
+          currentPlayer: newTurnUser ? newTurnUser.id : turnUser.id,
+        },
+        player.ws
+      )
+    })
   }
 };

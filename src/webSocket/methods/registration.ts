@@ -4,6 +4,7 @@ import { Player } from "../modules/Player";
 import { sendResponse } from "../utils";
 import { db } from "..";
 import WebSocket from "ws";
+import { randomUUID } from "crypto";
 
 
 export const registration = (ws: WebSocket, request: IRequest): Player => {
@@ -11,12 +12,16 @@ export const registration = (ws: WebSocket, request: IRequest): Player => {
   const userName = requestData.name;
   const userPassword = requestData.password;
 
+  const player = new Player(userName, userPassword, ws);
+  const {id, name} = player
+  db.addPlayer(player);
+
   const resp = JSON.stringify({
     type: TypeRequest.reg,
     data:
       JSON.stringify({
-        name: userName,
-        index: 1,
+        name: name,
+        index: id,
         error: false,
         errorText: '',
       }),
@@ -24,15 +29,12 @@ export const registration = (ws: WebSocket, request: IRequest): Player => {
   });
   ws.send(resp);
 
-  const player = new Player(userName, userPassword, ws);
-  db.addPlayer(player);
-
   if (db.rooms.length) {
     ws.send(JSON.stringify({
       type: TypeRequest.updateRoom,
       data: db.getRoomsForResp(),
       id: 0,
-    }))
+    }));
   }
 
   return player;

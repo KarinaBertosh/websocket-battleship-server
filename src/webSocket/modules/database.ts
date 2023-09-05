@@ -21,7 +21,6 @@ export class DataBase {
 
   addPlayerToRoom(roomId: string, player: Player) {
     this.rooms.map((room) => room.id === roomId ? room.addPlayer(player) : room);
-
   }
 
   getRoomPlayers(gameId: string): Player[] {
@@ -46,7 +45,9 @@ export class DataBase {
   }
 
   getRoomsForResp() {
-    return JSON.stringify(this.rooms.map((room) => ({
+    const freeRooms = this.rooms.filter((r) => r.players.length === 1);
+
+    return JSON.stringify(freeRooms.map((room) => ({
       roomId: room.id,
       roomUsers: room.players.map((player) => ({ name: player.name, index: player.id }))
     })))

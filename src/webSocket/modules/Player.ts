@@ -1,4 +1,4 @@
-import crypto from "crypto";
+import { randomUUID } from "crypto";
 
 import WebSocket from "ws";
 import { IShip } from "../../type";
@@ -15,7 +15,7 @@ export class Player {
   constructor(name: string, password: string, ws: WebSocket) {
     this.name = name;
     this.password = password;
-    this.id = crypto.randomUUID();
+    this.id = randomUUID();
     this.ws = ws;
   }
 

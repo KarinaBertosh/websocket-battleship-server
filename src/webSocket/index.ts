@@ -39,7 +39,7 @@ export const connectWithWebSocket = (ws: WebSocket) => {
         break;
 
       case TypeRequest.attack:
-        attack(ws, currentPlayer, request);
+        attack(request);
         break;
     }
   });

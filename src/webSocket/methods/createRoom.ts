@@ -13,6 +13,7 @@ export const createRoom = (
   request: IRequest
 ) => {
   const room = new Room();
+  room.addPlayer(player);
   db.addRoom(room);
 
   sendResponse(

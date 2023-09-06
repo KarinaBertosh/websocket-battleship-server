@@ -5,13 +5,14 @@ import { sendResponse } from '../utils';
 export const attack = (request: IRequest, isRandom = false) => {
   const requestData = JSON.parse(request.data);
   const { x, y, indexPlayer, gameId } = requestData;
-  const roomPlayers = db.getRoomPlayers(gameId)
+  const roomPlayers = db.getRoomPlayers(gameId);
 
-  const turnUser = roomPlayers.find((p) => p.isTurn)
+  const turnUser = roomPlayers.find((p) => p.isTurn);
+  const status = db.getStatusAttack(gameId, indexPlayer, x, y);
 
-   if (turnUser && turnUser.id === indexPlayer) {
+
+  if (turnUser && turnUser.id === indexPlayer) {
     roomPlayers.forEach(player => {
-
       sendResponse(
         TypeRequest.attack,
         {
@@ -21,14 +22,14 @@ export const attack = (request: IRequest, isRandom = false) => {
             y: y,
           },
           currentPlayer: indexPlayer,
-          status: "miss",
+          status: status,
         },
         player.ws
-      )
-      player.changeTurn();
+      );
+      if (status === 'miss') player.changeTurn();
     });
 
-    const newTurnUser = roomPlayers.find((p) => p.isTurn)
+    const newTurnUser = roomPlayers.find((p) => p.isTurn);
     roomPlayers.forEach(player => {
       sendResponse(
         TypeRequest.turn,
@@ -36,7 +37,7 @@ export const attack = (request: IRequest, isRandom = false) => {
           currentPlayer: newTurnUser ? newTurnUser.id : turnUser.id,
         },
         player.ws
-      )
-    })
+      );
+    });
   }
 };

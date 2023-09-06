@@ -9,7 +9,8 @@ export const attack = (request: IRequest, isRandom = false) => {
 
   const turnUser = roomPlayers.find((p) => p.isTurn);
   const status = db.getStatusAttack(gameId, indexPlayer, x, y);
-
+  console.log(122, status);
+  
 
   if (turnUser && turnUser.id === indexPlayer) {
     roomPlayers.forEach(player => {

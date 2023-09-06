@@ -35,3 +35,13 @@ export interface IShip {
   type: "huge" | "large" | "medium" | "small",
   length: number
 }
+
+// export interface ISavedShips {}
+
+// ISavedShips
+
+export interface IPosition {
+  x: number,
+  y: number,
+  status: "huge" | "large" | "medium" | "small" | '',
+}

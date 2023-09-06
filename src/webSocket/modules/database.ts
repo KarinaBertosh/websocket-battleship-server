@@ -48,7 +48,11 @@ export class DataBase {
     if (game) {
       const defenderPlayer = game.players.filter((p) => p.id !== attackerPlayerId)[0];
       const ships = defenderPlayer.ships;
-      console.log('ships', ships);
+      const savedShips = defenderPlayer.savedShips;
+      let isKilled = false;
+
+      // console.log('ships', ships);
+      // console.log('savedShips', savedShips);
       console.log('x', x);
       console.log('y', y);
 
@@ -58,8 +62,12 @@ export class DataBase {
         const direction = ship.direction;
 
 
-        if ((ship.position.x === x && ship.position.y === y)) {
+        if ((ship.position.x === x && ship.position.y === y && ship.type === 'small')) {
           status = "killed";
+        }
+
+        if ((ship.position.x === x && ship.position.y === y && ship.type !== 'small')) {
+          status = "shot";
         }
 
 
@@ -77,6 +85,7 @@ export class DataBase {
             status = 'shot';
           }
 
+
         }
 
         if (!direction && type !== 'small') {
@@ -93,9 +102,17 @@ export class DataBase {
             status = 'shot';
           }
         }
-        type = ship.type;
-        return;
 
+        defenderPlayer.changeSavedShips(x, y);
+
+        type = ship.type;
+        isKilled = defenderPlayer.isKilledShip();
+        console.log(222, isKilled);
+
+        if (isKilled) {
+          status = 'killed';
+        }
+        isKilled = false;
 
       });
       console.log(3, status);

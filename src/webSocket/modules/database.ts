@@ -44,7 +44,10 @@ export class DataBase {
     const game = this.rooms.find((room) => room.id === gameId);
     let status = false;
     let type;
-    let direction;
+    let direction = false;
+    let length = 1;
+    let newX;
+    let newY;
 
     if (game) {
       const defenderPlayer = game.players.filter((p) => p.id !== attackerPlayerId)[0];
@@ -52,14 +55,50 @@ export class DataBase {
       console.log('ships', ships);
       console.log('x', x);
       console.log('y', y);
-      
+
 
       ships.forEach((ship) => {
-        if (ship.position.x === x && ship.position.y === y) {
+        type = ship.type;
+
+        if ((ship.position.x === x && ship.position.y === y)) {
           status = true;
-          type = ship.type;
-          return;
         }
+        
+
+        if (ship.direction && type !== 'small') {
+          if ((ship.position.x === x && ship.position.y + 1 === y && ship.position.y + 1 < ship.position.y + ship.length)) {
+            status = true;
+          }
+          if ((ship.position.x === x && ship.position.y + 2 === y && ship.position.y + 2 < ship.position.y + ship.length)) {
+            status = true;
+          }
+          if ((ship.position.x === x && ship.position.y + 3 === y && ship.position.y + 3 < ship.position.y + ship.length)) {
+            status = true;
+          }
+          if ((ship.position.x === x && ship.position.y + 4 === y && ship.position.y + 4 < ship.position.y + ship.length)) {
+            status = true;
+          }
+
+        }
+
+        if (!ship.direction && type !== 'small') {
+          if ((ship.position.x + 1 === x && ship.position.y === y && ship.position.x + 1 < ship.position.x + ship.length)) {
+            status = true;
+          }
+          if ((ship.position.x + 2 === x && ship.position.y === y && ship.position.x + 2 < ship.position.x + ship.length)) {
+            status = true;
+          }
+          if ((ship.position.x + 3 === x && ship.position.y === y && ship.position.x + 3 < ship.position.x + ship.length)) {
+            status = true;
+          }
+          if ((ship.position.x + 4 === x && ship.position.y === y && ship.position.x + 4 < ship.position.x + ship.length)) {
+            status = true;
+          }
+        }
+        type = ship.type;
+        return;
+
+
       });
       console.log(3, status);
 

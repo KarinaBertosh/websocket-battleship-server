@@ -56,46 +56,25 @@ export class DataBase {
   changeStatus(ships: IShip[], x: number, y: number) {
     let status = 'miss';
     let type = '';
+
     ships.forEach((ship) => {
       type = ship.type;
-      const direction = ship.direction;
+      const { position, length, direction } = ship;
 
       const doStatusKilled = () => status = "killed";
       const doStatusShot = () => status = "shot";
-      const posX = ship.position.x
-      const posY = ship.position.y
-      const shipLength = ship.length
+      const posX = position.x;
+      const posY = position.y;
 
-      if ((posX === x && posY === y && type === 'small')) {
-        doStatusKilled();
-      }
-
-      if ((posX === x && posY === y && type !== 'small')) {
-        doStatusShot();
-      }
-
-
-      if (direction && type !== 'small') {
-        if ((posX === x
-          && ((posY + 1 === y && posY + 1 < posY + shipLength)
-            || (posY + 2 === y && posY + 2 < posY + shipLength)
-            || (posY + 3 === y && posY + 3 < posY + shipLength)
-            || (posY + 4 === y && posY + 4 < posY + shipLength))
-        )) {
-          doStatusShot();
+      if (type === 'small') {
+        posX === x && posY === y && doStatusKilled();
+      } else {
+        for (let i = 0; i < length; i++) {
+          if (direction && (posX === x && ((posY === y) || (posY + i === y && posY + i < posY + length)))) doStatusShot();
+          if (!direction && (posY === y && ((posX === x) || (posX + i === x && posX + i < posX + length)))) doStatusShot();
         }
       }
 
-      if (!direction && type !== 'small') {
-        if ((posY === y
-          && ((posX + 1 === x && posX + 1 < posX + shipLength)
-            || (posX + 2 === x && posX + 2 < posX + shipLength)
-            || (posX + 3 === x && posX + 3 < posX + shipLength)
-            || (posX + 4 === x && posX + 4 < posX + shipLength))
-        )) {
-          doStatusShot();
-        }
-      }
     });
     return status;
   }
@@ -104,11 +83,11 @@ export class DataBase {
   getStatusAttack(gameId: string, attackerPlayerId: string, x: number, y: number) {
     const game = this.getRoom(gameId);
     let status = 'miss';
+    let isKilledShip = false;
 
     if (game) {
       const defenderPlayer = game.players.filter((p) => p.id !== attackerPlayerId)[0];
       const ships = defenderPlayer.ships;
-      let isKilledShip = false;
 
       status = this.changeStatus(ships, x, y);
       defenderPlayer.changeSavedShips(x, y);

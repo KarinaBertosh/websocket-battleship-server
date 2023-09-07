@@ -40,6 +40,19 @@ export class DataBase {
     });
   }
 
+  getPosShip(gameId: string, attackerPlayerId: string, x: number, y: number) {
+    const game = this.rooms.find((room) => room.id === gameId);
+    if (game) {
+      const defenderPlayer = game.players.filter((p) => p.id !== attackerPlayerId)[0];
+      const savedShips = defenderPlayer.savedShips;
+      const killedShip = defenderPlayer.getShip();
+      // console.log(555, killedShip);
+      return killedShip && killedShip;
+    }
+
+  }
+
+
   getStatusAttack(gameId: string, attackerPlayerId: string, x: number, y: number) {
     const game = this.rooms.find((room) => room.id === gameId);
     let status = 'miss';
@@ -103,19 +116,19 @@ export class DataBase {
           }
         }
 
-        defenderPlayer.changeSavedShips(x, y);
-
+        
         type = ship.type;
-        isKilled = defenderPlayer.isKilledShip();
-        console.log(222, isKilled);
-
-        if (isKilled) {
-          status = 'killed';
-        }
-        isKilled = false;
-
       });
-      console.log(3, status);
+      defenderPlayer.changeSavedShips(x, y);
+
+      isKilled = defenderPlayer.isKilledShip();
+      // console.log(222, isKilled);
+
+      if (isKilled) {
+        status = 'killed';
+        isKilled = false;
+      }
+      // console.log(3, status);
 
       return status;
     }

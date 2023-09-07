@@ -30,6 +30,10 @@ export class DataBase {
       : [];
   }
 
+  getRoom(gameId: string) {
+    return this.rooms.find((room) => room.id === gameId);
+  }
+
   addShips(gameId: string, playerId: string, ships: IShip[]) {
     this.rooms.map((room) => {
       if (room.id === gameId) {
@@ -41,94 +45,80 @@ export class DataBase {
   }
 
   getPosShip(gameId: string, attackerPlayerId: string, x: number, y: number) {
-    const game = this.rooms.find((room) => room.id === gameId);
+    const game = this.getRoom(gameId);
     if (game) {
       const defenderPlayer = game.players.filter((p) => p.id !== attackerPlayerId)[0];
-      const savedShips = defenderPlayer.savedShips;
       const killedShip = defenderPlayer.getShip();
-      // console.log(555, killedShip);
       return killedShip && killedShip;
     }
+  }
 
+  changeStatus(ships: IShip[], x: number, y: number) {
+    let status = 'miss';
+    let type = '';
+    ships.forEach((ship) => {
+      type = ship.type;
+      const direction = ship.direction;
+
+      const doStatusKilled = () => status = "killed";
+      const doStatusShot = () => status = "shot";
+      const posX = ship.position.x
+      const posY = ship.position.y
+      const shipLength = ship.length
+
+      if ((posX === x && posY === y && type === 'small')) {
+        doStatusKilled();
+      }
+
+      if ((posX === x && posY === y && type !== 'small')) {
+        doStatusShot();
+      }
+
+
+      if (direction && type !== 'small') {
+        if ((posX === x
+          && ((posY + 1 === y && posY + 1 < posY + shipLength)
+            || (posY + 2 === y && posY + 2 < posY + shipLength)
+            || (posY + 3 === y && posY + 3 < posY + shipLength)
+            || (posY + 4 === y && posY + 4 < posY + shipLength))
+        )) {
+          doStatusShot();
+        }
+      }
+
+      if (!direction && type !== 'small') {
+        if ((posY === y
+          && ((posX + 1 === x && posX + 1 < posX + shipLength)
+            || (posX + 2 === x && posX + 2 < posX + shipLength)
+            || (posX + 3 === x && posX + 3 < posX + shipLength)
+            || (posX + 4 === x && posX + 4 < posX + shipLength))
+        )) {
+          doStatusShot();
+        }
+      }
+    });
+    return status;
   }
 
 
   getStatusAttack(gameId: string, attackerPlayerId: string, x: number, y: number) {
-    const game = this.rooms.find((room) => room.id === gameId);
+    const game = this.getRoom(gameId);
     let status = 'miss';
-    let type;
 
     if (game) {
       const defenderPlayer = game.players.filter((p) => p.id !== attackerPlayerId)[0];
       const ships = defenderPlayer.ships;
-      const savedShips = defenderPlayer.savedShips;
       let isKilled = false;
 
-      // console.log('ships', ships);
-      // console.log('savedShips', savedShips);
-      console.log('x', x);
-      console.log('y', y);
-
-
-      ships.forEach((ship) => {
-        type = ship.type;
-        const direction = ship.direction;
-
-
-        if ((ship.position.x === x && ship.position.y === y && ship.type === 'small')) {
-          status = "killed";
-        }
-
-        if ((ship.position.x === x && ship.position.y === y && ship.type !== 'small')) {
-          status = "shot";
-        }
-
-
-        if (direction && type !== 'small') {
-          if ((ship.position.x === x && ship.position.y + 1 === y && ship.position.y + 1 < ship.position.y + ship.length)) {
-            status = 'shot';
-          }
-          if ((ship.position.x === x && ship.position.y + 2 === y && ship.position.y + 2 < ship.position.y + ship.length)) {
-            status = 'shot';
-          }
-          if ((ship.position.x === x && ship.position.y + 3 === y && ship.position.y + 3 < ship.position.y + ship.length)) {
-            status = 'shot';
-          }
-          if ((ship.position.x === x && ship.position.y + 4 === y && ship.position.y + 4 < ship.position.y + ship.length)) {
-            status = 'shot';
-          }
-
-
-        }
-
-        if (!direction && type !== 'small') {
-          if ((ship.position.x + 1 === x && ship.position.y === y && ship.position.x + 1 < ship.position.x + ship.length)) {
-            status = 'shot';
-          }
-          if ((ship.position.x + 2 === x && ship.position.y === y && ship.position.x + 2 < ship.position.x + ship.length)) {
-            status = 'shot';
-          }
-          if ((ship.position.x + 3 === x && ship.position.y === y && ship.position.x + 3 < ship.position.x + ship.length)) {
-            status = 'shot';
-          }
-          if ((ship.position.x + 4 === x && ship.position.y === y && ship.position.x + 4 < ship.position.x + ship.length)) {
-            status = 'shot';
-          }
-        }
-
-        
-        type = ship.type;
-      });
+      status = this.changeStatus(ships, x, y);
       defenderPlayer.changeSavedShips(x, y);
 
       isKilled = defenderPlayer.isKilledShip();
-      // console.log(222, isKilled);
 
       if (isKilled) {
         status = 'killed';
         isKilled = false;
       }
-      // console.log(3, status);
 
       return status;
     }

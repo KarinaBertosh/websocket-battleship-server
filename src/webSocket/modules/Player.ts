@@ -68,7 +68,6 @@ export class Player {
 
 
     });
-    // console.log(999, this.savedShips);
   }
 
   getShip() {

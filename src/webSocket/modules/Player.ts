@@ -70,7 +70,7 @@ export class Player {
 
       ship.forEach((el: IPosition, i: number) => {
         if (ship[0].status === 'shot' && ship[ship.length - 1].status === 'shot') {
-          ship[i].status = 'killed';
+          el.status = 'killed';
         }
       });
     });
@@ -93,13 +93,9 @@ export class Player {
 
   deleteShip() {
     this.savedShips.forEach((ship) => {
-      for (let i = 0; i < ship.length; i++) {
-        if (ship[0].status === 'killed') {
-          console.log(5, 'ship[0].status', ship[0].status);
-
-          ship[0].status = 'o';
-          return;
-        }
+      if (ship[0].status === 'killed') {
+        ship[0].status = 'o';
+        return;
       }
     });
   }

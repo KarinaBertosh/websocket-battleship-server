@@ -36,12 +36,8 @@ export interface IShip {
   length: number
 }
 
-// export interface ISavedShips {}
-
-// ISavedShips
-
 export interface IPosition {
   x: number,
   y: number,
-  status: "huge" | "large" | "medium" | "small" | '',
+  status: "killed" | "shot" | "miss" | "" | 'o',
 }

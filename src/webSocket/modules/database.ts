@@ -53,7 +53,7 @@ export class DataBase {
     }
   }
 
-  changeStatus(ships: IShip[], x: number, y: number) {
+  changeStatus(ships: IShip[], x: number, y: number, defenderPlayer: Player) {
     let status = 'miss';
     let type = '';
 
@@ -74,8 +74,9 @@ export class DataBase {
           if (!direction && (posY === y && ((posX === x) || (posX + i === x && posX + i < posX + length)))) doStatusShot();
         }
       }
-
     });
+
+    defenderPlayer.changeSavedShips(x, y);
     return status;
   }
 
@@ -89,9 +90,7 @@ export class DataBase {
       const defenderPlayer = game.players.filter((p) => p.id !== attackerPlayerId)[0];
       const ships = defenderPlayer.ships;
 
-      status = this.changeStatus(ships, x, y);
-      defenderPlayer.changeSavedShips(x, y);
-
+      status = this.changeStatus(ships, x, y, defenderPlayer);
       isKilledShip = defenderPlayer.isKilledShip();
 
       if (isKilledShip) {

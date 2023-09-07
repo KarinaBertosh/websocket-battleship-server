@@ -62,36 +62,32 @@ export class Player {
   changeSavedShips(x: number, y: number) {
     this.savedShips.forEach((ship) => {
 
-      for (let i = 0; i < ship.length; i++) {
+      ship.forEach((el: IPosition, i: number) => {
         if (ship[i].x === x && ship[i].y === y) {
           ship[i].status = 'shot';
         }
-      }
+      });
 
-      for (let i = 0; i < ship.length; i++) {
+      ship.forEach((el: IPosition, i: number) => {
         if (ship[0].status === 'shot' && ship[ship.length - 1].status === 'shot') {
           ship[i].status = 'killed';
         }
-        if (ship[i].status === 'shot' && ship[i].type === 'small') {
-          ship[i].status = 'killed';
-        }
-      }
-
+      });
     });
-    console.log(15, this.savedShips);
+
   }
 
 
   isKilledShip() {
     let isKilledShip = false;
+
     this.savedShips.forEach((ship) => {
-      for (let i = 0; i < ship.length; i++) {
-        if (ship[0].status === 'killed') {
-          isKilledShip = true;
-          return;
-        }
+      if (ship[0].status === 'killed') {
+        isKilledShip = true;
+        return;
       }
     });
+
     return isKilledShip;
   }
 

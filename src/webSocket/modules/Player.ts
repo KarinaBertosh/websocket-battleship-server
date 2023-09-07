@@ -30,30 +30,29 @@ export class Player {
     return data;
   }
 
-  renderSavedShips(ships: IShip[]) {
+  saveShips(ships: IShip[]) {
     this.ships.forEach((ship) => {
+      const { position, length, direction } = ship;
+      const posX = position.x;
+      const posY = position.y;
+      const array = [];
 
-      if(ship.direction) {
-        const array = []
-        for (let i = 0; i < ship.length; i++) {
-          array.push({ x: ship.position.x, y: ship.position.y + i, status: 'miss' });
-        }
-        this.savedShips.push(array);
-      } else {
-        const array = []
-        for (let i = 0; i < ship.length; i++) {
-          array.push({ x: ship.position.x + i, y: ship.position.y, status: 'miss' });
-        }
-        this.savedShips.push(array);
+      const addToArray = (curDirection: boolean, i: number) => curDirection
+        ? { x: posX, y: posY + i, status: 'miss' }
+        : { x: posX + i, y: posY, status: 'miss' };
+
+      for (let i = 0; i < length; i++) {
+        array.push(addToArray(direction, i));
       }
 
-    }); 
+      this.savedShips.push(array);
+    });
   }
 
   addShips(ships: IShip[]) {
     this.ships = ships;
     this.savedShips.length = 0;
-    this.renderSavedShips(this.ships);
+    this.saveShips(this.ships);
   }
 
   getShip() {

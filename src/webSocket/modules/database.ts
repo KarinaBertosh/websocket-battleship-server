@@ -108,16 +108,16 @@ export class DataBase {
     if (game) {
       const defenderPlayer = game.players.filter((p) => p.id !== attackerPlayerId)[0];
       const ships = defenderPlayer.ships;
-      let isKilled = false;
+      let isKilledShip = false;
 
       status = this.changeStatus(ships, x, y);
       defenderPlayer.changeSavedShips(x, y);
 
-      isKilled = defenderPlayer.isKilledShip();
+      isKilledShip = defenderPlayer.isKilledShip();
 
-      if (isKilled) {
+      if (isKilledShip) {
         status = 'killed';
-        isKilled = false;
+        isKilledShip = false;
       }
 
       return status;

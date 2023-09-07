@@ -30,44 +30,30 @@ export class Player {
     return data;
   }
 
+  renderSavedShips(ships: IShip[]) {
+    this.ships.forEach((ship) => {
+
+      if(ship.direction) {
+        const array = []
+        for (let i = 0; i < ship.length; i++) {
+          array.push({ x: ship.position.x, y: ship.position.y + i, status: 'miss' });
+        }
+        this.savedShips.push(array);
+      } else {
+        const array = []
+        for (let i = 0; i < ship.length; i++) {
+          array.push({ x: ship.position.x + i, y: ship.position.y, status: 'miss' });
+        }
+        this.savedShips.push(array);
+      }
+
+    }); 
+  }
+
   addShips(ships: IShip[]) {
     this.ships = ships;
     this.savedShips.length = 0;
-
-    this.ships.forEach((ship) => {
-      switch (true) {
-        case ship.type === 'small':
-          this.savedShips.push([{ x: ship.position.x, y: ship.position.y, status: 'miss' }]);
-          break;
-
-        case ship.direction && ship.type === 'medium':
-          this.savedShips.push([{ x: ship.position.x, y: ship.position.y, status: 'miss' }, { x: ship.position.x, y: ship.position.y + 1, status: 'miss' }]);
-          break;
-
-        case ship.direction && ship.type === 'large':
-          this.savedShips.push([{ x: ship.position.x, y: ship.position.y, status: 'miss' }, { x: ship.position.x, y: ship.position.y + 1, status: 'miss' }, { x: ship.position.x, y: ship.position.y + 2, status: 'miss' }]);
-          break;
-
-
-        case ship.direction && ship.type === 'huge':
-          this.savedShips.push([{ x: ship.position.x, y: ship.position.y, status: 'miss' }, { x: ship.position.x, y: ship.position.y + 1, status: 'miss' }, { x: ship.position.x, y: ship.position.y + 2, status: 'miss' }, { x: ship.position.x, y: ship.position.y + 3, status: 'miss' }]);
-          break;
-
-        case !ship.direction && ship.type === 'medium':
-          this.savedShips.push([{ x: ship.position.x, y: ship.position.y, status: 'miss' }, { x: ship.position.x + 1, y: ship.position.y, status: 'miss' }]);
-          break;
-
-        case !ship.direction && ship.type === 'large':
-          this.savedShips.push([{ x: ship.position.x, y: ship.position.y, status: 'miss' }, { x: ship.position.x + 1, y: ship.position.y, status: 'miss' }, { x: ship.position.x + 2, y: ship.position.y, status: 'miss' }]);
-          break;
-
-        case !ship.direction && ship.type === 'huge':
-          this.savedShips.push([{ x: ship.position.x, y: ship.position.y, status: 'miss' }, { x: ship.position.x + 1, y: ship.position.y, status: 'miss' }, { x: ship.position.x + 2, y: ship.position.y, status: 'miss' }, { x: ship.position.x + 3, y: ship.position.y, status: 'miss' }]);
-          break;
-      }
-
-
-    });
+    this.renderSavedShips(this.ships);
   }
 
   getShip() {
@@ -114,9 +100,9 @@ export class Player {
     this.savedShips.forEach((ship) => {
       for (let i = 0; i < ship.length; i++) {
         if (ship[0].status === 'killed') {
-          console.log(5,'ship[0].status' , ship[0].status);
-        
-          ship[0].status = 'o'
+          console.log(5, 'ship[0].status', ship[0].status);
+
+          ship[0].status = 'o';
           return;
         }
       }

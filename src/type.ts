@@ -22,6 +22,7 @@ export const TypeRequest = {
   turn: "turn",
   attack: "attack",
   startGame: "start_game",
+  finish: "finish"
 };
 
 interface IShipPosition {

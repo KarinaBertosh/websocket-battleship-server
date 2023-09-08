@@ -17,10 +17,8 @@ export const connectWithWebSocket = (ws: WebSocket) => {
   ws.on('error', console.error);
 
   ws.on('message', (message: RawData) => {
-    console.log(0, message.toString());
-
     const request = JSON.parse(message.toString()) as IRequest;
-
+    
     switch (request.type) {
       case TypeRequest.reg:
         currentPlayer = registration(ws, request);

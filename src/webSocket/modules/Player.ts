@@ -77,6 +77,21 @@ export class Player {
 
   }
 
+  isAllShipsKilled() {
+    const missedShipsSells = [];
+
+    this.savedShips.forEach((ship) => {
+      ship.forEach((el: IPosition, i: number) => {
+        if (ship[i].status === 'miss') {
+          missedShipsSells.push(ship[i]);
+        }
+      });
+    });
+
+    if (!(missedShipsSells.length > 0)) return true;
+    return false;
+  }
+
 
   isKilledShip() {
     let isKilledShip = false;

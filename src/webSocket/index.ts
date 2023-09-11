@@ -10,15 +10,16 @@ import { attack } from "./methods/attack";
 import WebSocket, { RawData } from "ws";
 
 export const db = new DataBase();
+export const connections: WebSocket[] = [];
 
 export const connectWithWebSocket = (ws: WebSocket) => {
   let currentPlayer: Player;
+  connections.push(ws);
 
   ws.on('error', console.error);
 
   ws.on('message', (message: RawData) => {
     const request = JSON.parse(message.toString()) as IRequest;
-    
     switch (request.type) {
       case TypeRequest.reg:
         currentPlayer = registration(ws, request);
@@ -39,6 +40,13 @@ export const connectWithWebSocket = (ws: WebSocket) => {
       case TypeRequest.attack:
         attack(request);
         break;
+    }
+  });
+  ws.on("close", () => {
+    console.log("WebSocket connection closed");
+    const index = connections.indexOf(ws);
+    if (index !== -1) {
+      connections.splice(index, 1);
     }
   });
 };
